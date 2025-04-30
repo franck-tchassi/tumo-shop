@@ -25,7 +25,7 @@
         "./sanity.types.ts"
       ],
       "@prisma/client": [
-        "./src/generated/prisma"
+        "./lib/generated/prisma"
       ]
     },
   },
