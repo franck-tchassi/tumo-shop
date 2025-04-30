@@ -2,6 +2,20 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+
+# prisma config
+npm i prisma/client
+npx i prisma init
+dans le schema prisma créer un schema User et Session
+faire npx prisma db push
+visualiser sa base de donnée avec npx prisma studio
+
+# sanity config
+apres avoir remplir la structure des produits avec promotion
+sanity deploy
+sanity schema extract
+sanity typegen generate
+
 First, run the development server:
 
 ```bash
