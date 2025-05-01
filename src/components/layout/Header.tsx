@@ -5,38 +5,15 @@ import { User } from '@/lib/generated/prisma';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import HeaderSearchBar from './HeaderSearchBar';
+import { FaRegUser } from "react-icons/fa6";
+import AnnouncementBar from './AnnouncementBar';
 
-// Barre d'annonces en haut de la page
-const AnnouncementBar = () => {
-  return (
-    <div className="w-full bg-black py-2">
-      <div className="container mx-auto flex items-center justify-center px-4 sm:px-6">
-        <span className="text-center text-xs sm:text-sm font-medium tracking-wide text-white">
-          FREE SHIPPING ON ORDERS OVER $15.00 • FREE RETURNS
-        </span>
-      </div>
-    </div>
-  );
-};
+
 
 // Nouveau composant SearchButton
 const SearchButton = () => (
-    <IconButton>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-5 h-5 sm:w-6 sm:h-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-        />
-      </svg>
-    </IconButton>
+   <HeaderSearchBar />
 );
 
 
@@ -98,10 +75,11 @@ const CartButton = ({ itemCount = 0 }: { itemCount?: number }) => (
 
 type HeaderProps = {
     user: Omit<User, "passwordHash"> | null;
+    categorySelector: React.ReactNode;
 }
 
 // Composant principal Header
-const Header = ({user}: HeaderProps) => {
+const Header = ({user, categorySelector}: HeaderProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [prevScrollY, setPrevScrollY] = useState(0);
 
@@ -163,14 +141,13 @@ const Header = ({user}: HeaderProps) => {
               {/* Logo centre */}
               <div className="flex flex-1 justify-center md:justify-start">
                 <Link href="/" className="text-xl sm:text-2xl font-bold tracking-tight">
-                  Tumo
+                TÜMO
                 </Link>
               </div>
 
               {/* Navigation desktop */}
               <nav className="hidden md:flex  gap-6 lg:gap-8 mr-12">
-                <NavLink href="#">Home</NavLink>
-                <NavLink href="#">New Arrivals</NavLink>
+                {categorySelector}
                 <NavLink href="#">Sale</NavLink>
               </nav>
 
@@ -180,25 +157,37 @@ const Header = ({user}: HeaderProps) => {
                   <SearchButton />
 
                   {user ? (
-                    <div className='flex items-center gap-2  sm:gap-4'>
-                        <span className='text-xs text-gray-700 hidden md:block'>{user.email}</span>
-                        <Link 
-                            href={"#"}
-                            className='text-sm sm:text-sm font-medium text-gray-700 hover:text-gray-900'
-                            onClick={async (e) => {
-                                e.preventDefault()
-                                await logoutUser()
-                                router.refresh()
-                            }}
-                        >
-                            Sign Out
-                        </Link>
-                    </div>
+                    <div className='flex items-center gap-3'>
+                    <Link 
+                      href="#"
+                      className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                      onClick={async (e) => {
+                        e.preventDefault()
+                        await logoutUser()
+                        router.refresh()
+                      }}
+                    >
+                      <FaRegUser className="w-5 h-5 text-gray-800" />
+                      <div className="hidden sm:flex flex-col text-left">
+                        <span className="text-xs text-gray-500 truncate">
+                          Hi, {user.email.substring(0, 6)}...
+                        </span>
+                        <span className="text-xs font-medium">Account</span>
+                      </div>
+                    </Link>
+                  </div>
                   ) : (
-                    <React.Fragment>
-                        <NavLink href="/auth/sign-in">Sign In</NavLink>
-                        <NavLink href="/auth/sign-up">Sign Up</NavLink>
-                    </React.Fragment>
+                    <Link 
+                      href="/auth/sign-in" 
+                      className="flex items-center gap-2 p-2  rounded-full hover:bg-gray-100 transition-colors whitespace-nowrap min-w-max"
+                    >
+                      <FaRegUser className="w-6 h-6 text-gray-800" />
+                      <div className="hidden sm:flex flex-col text-left">
+                        <span className="text-xs text-gray-500">Welcome</span>
+                        <span className="text-xs font-medium whitespace-nowrap">Sign in / Register</span>
+                      </div>
+                    </Link>
+                        
                   )}
 
                 </div>

@@ -1,50 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛍️ TUMO – E-commerce Platform
 
-## Getting Started
+TUMO est une plateforme e-commerce moderne, rapide et évolutive, construite avec les dernières technologies du web.
+
+## 🧱 Stack utilisée
+
+- **Framework** : [Next.js](https://nextjs.org) (App Router)  
+- **Base de données** : PostgreSQL + Prisma ORM  
+- **CMS headless** : [Sanity](https://www.sanity.io)  
+- **Authentification** : [Lucia Auth](https://lucia-auth.com)  
+- **Gestion d'état** : [Zustand](https://github.com/pmndrs/zustand)  
+- **Validation de schémas** : [Zod](https://github.com/colinhacks/zod)  
+- **UI & Styles** : TailwindCSS + [shadcn/ui](https://ui.shadcn.com)  
+- **Paiement** : Stripe  
+- **Déploiement** : Vercel  
+- **Langage** : TypeScript  
+
+---
+
+## 🚀 Lancer le projet en local
+
+### 1. Lancer le serveur
+npm run dev
+L'application est accessible à l'adresse http://localhost:3000
 
 
-# prisma config
-npm i prisma/client
-npx i prisma init
-dans le schema prisma créer un schema User et Session
-faire npx prisma db push
-visualiser sa base de donnée avec npx prisma studio
+## 🛠️ Configuration de Prisma
+### 1. Installer Prisma :
+npm install prisma @prisma/client
+npx prisma init
+### 2. Dans schema.prisma, ajouter les modèles User et Session.
 
-# sanity config
-apres avoir remplir la structure des produits avec promotion
+### 3. Pousser le schéma dans la base de données :
+npx prisma db push
+
+### 4. Ouvrir Prisma Studio pour visualiser les données :
+npx prisma studio
+
+
+## 📦 Configuration Sanity
+
+### 1. Définir les schémas pour les produits, catégories, promotions, etc.
+
+### 2. Lancer le studio Sanity :
 sanity deploy
+
+### 3. Extraire le schéma :
 sanity schema extract
+
+### 4. Générer les types TypeScript :
 sanity typegen generate
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🔐 Authentification avec Lucia
+Lucia est utilisée pour gérer l'authentification sécurisée. Elle fonctionne avec Prisma et stocke les sessions utilisateur.
+Assurez-vous de bien configurer vos variables d’environnement .env pour la clé secrète (AUTH_SECRET) et autres paramètres.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 💳 Paiement avec Stripe
+L'intégration Stripe permet d'accepter des paiements en ligne de manière sécurisée.
+Configurer vos clés API dans .env :
+### STRIPE_SECRET_KEY=...
+### STRIPE_PUBLIC_KEY=...
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+## 📁 Structure du projet
+### app/ : routes, pages, composants du routeur App
 
-To learn more about Next.js, take a look at the following resources:
+### components/ : composants UI réutilisables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### lib/ : fonctions utilitaires (auth, Stripe, Sanity, etc.)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### prisma/ : schéma Prisma
 
-## Deploy on Vercel
+### sanity/ : configuration et schéma du CMS
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### styles/ : fichiers CSS globaux
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### types/ : définitions TypeScript partagées
+
+### .env : variables d’environnement
+
+
+## ✅ Scripts utiles
+### npm run dev             # Lancer le serveur de développement
+### npm run build           # Générer le build de production
+### npx prisma studio       # Ouvrir l'interface de base de données
+### sanity typegen generate # Générer les types Sanity
+
+
+## ☁️ Déploiement
+Le projet est prêt à être déployé sur Vercel.
+Assurez-vous d’ajouter toutes les variables d’environnement nécessaires dans le dashboard Vercel.
+
+
+## ✨ Remerciements
+Merci à la communauté open source pour les outils et les bibliothèques incroyables qui rendent ce type de projet possible.
