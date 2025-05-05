@@ -113,10 +113,11 @@ const Header = ({user, categorySelector}: HeaderProps) => {
           isVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
+      
         <AnnouncementBar />
 
         <div className="w-full bg-white/80 backdrop-blur-sm border-b border-gray-100">
-          <div className="container mx-auto px-4 sm:px-6">
+          <div className="container mx-auto px-6 md:px-20 ">
             <div className="flex items-center justify-between h-16 sm:h-20 ">
               {/* Navigation gauche - Menu mobile */}
               <div className="flex items-center md:hidden">

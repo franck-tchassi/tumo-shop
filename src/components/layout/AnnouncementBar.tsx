@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {  FiDollarSign } from 'react-icons/fi';
+import { FiDollarSign } from 'react-icons/fi';
 import { GoInfo } from "react-icons/go";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import { TbTruckDelivery } from "react-icons/tb";
@@ -16,22 +16,22 @@ const AnnouncementBar = () => {
     { 
       title: "Free returns",
       sous_title: "Up to 90 days*", 
-      icon: <MdAssignmentReturn className="text-yellow-300 text-2xl" />,
+      icon: <MdAssignmentReturn className="text-yellow-300 text-3xl" />,
     },
     { 
       title: "Delivery guaranteed", 
       sous_title: "Refund for any issues",
-      icon: <TbTruckDelivery className="text-yellow-300 text-2xl" />,
+      icon: <TbTruckDelivery className="text-yellow-300 text-3xl" />,
     },
     { 
       title: "Price adjustment", 
       sous_title: "Within 30 days",
-      icon: <FiDollarSign className="text-amber-300 text-2xl" />,
+      icon: <FiDollarSign className="text-amber-300 text-3xl" />,
     },
     { 
       title: "Minimun Order Value", 
       sous_title: "Min. order value:$9.99",
-      icon: <MdOutlineShoppingCartCheckout className="text-yellow-300 text-2xl" />,
+      icon: <MdOutlineShoppingCartCheckout className="text-yellow-300 text-3xl" />,
     }
   ];
 
@@ -49,45 +49,47 @@ const AnnouncementBar = () => {
   }, []);
 
   return (
-    <div className="w-full bg-gray-900 py-3 px-4 border-b border-gray-700">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <div className="w-full bg-gray-900 py-3 px-6 md:px-20 border-b border-gray-700 hidden md:block">
+      <div className="mx-auto flex items-center justify-between">
         {/* Partie gauche - Free Shipping */}
-        <ShippingInfoModal>
+        <div className="flex items-center">
+          <ShippingInfoModal>
             <div className="flex items-center gap-3">
-              <div className="bg-green-800/30 p-1.5 rounded-full">
-                  <LiaShippingFastSolid className="text-green-300 text-2xl" />
-              </div>
-              <div className="flex flex-col ">
-                  <div className="flex items-center gap-1">
+              <LiaShippingFastSolid className="text-green-300 text-3xl" />
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1">
                   <span className="text-base font-bold text-green-300 hover:underline">Free shipping</span>
                   <GoInfo className="text-green-300 text-xs" />
-                  </div>
-                  <span className="text-base font-bold text-green-300 hover:underline">Incredible</span>
+                </div>
+                <span className="text-base font-bold text-green-300 hover:underline">Incredible</span>
               </div>
             </div>
-        </ShippingInfoModal>
+          </ShippingInfoModal>
+        </div>
 
-        {/* Séparateur */}
-        <div className="h-6 w-px bg-gray-600 mx-2" />
+        {/* Séparateur fixe */}
+        <div className="mx-20 h-6 w-px flex-shrink-0 bg-gradient-to-b from-gray-400 via-gray-600 to-gray-400"></div>
 
         {/* Partie droite - Promotions défilantes */}
-        
-        <ShippingInfoAllMadal >
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="bg-yellow-50/15 p-1.5 rounded-full">
-              {promotions[currentPromo].icon}
+        <div className="flex-1 min-w-0">
+          <ShippingInfoAllMadal>
+            <div className="flex items-center gap-3 h-[60px] overflow-hidden relative">
+              <div className={`transition-all duration-800 transform ${
+                isTransitioning ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100'
+              } flex items-center gap-3`}>
+                {promotions[currentPromo].icon}
+                <div className="flex flex-col">
+                  <span className="text-base font-bold text-yellow-200 block">
+                    {promotions[currentPromo].title}
+                  </span>
+                  <span className="text-base font-medium text-yellow-200 block">
+                    {promotions[currentPromo].sous_title}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className={`flex flex-col transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'} overflow-hidden`}>
-              <span className="text-basr font-bold text-yellow-200">
-                {promotions[currentPromo].title}
-              </span>
-              <span className="text-base font-medium text-yellow-200">
-                {promotions[currentPromo].sous_title}
-              </span>
-            </div>
-          </div>
-        </ShippingInfoAllMadal>
-        
+          </ShippingInfoAllMadal>
+        </div>
       </div>
     </div>
   );

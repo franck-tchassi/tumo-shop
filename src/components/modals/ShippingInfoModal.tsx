@@ -15,7 +15,7 @@ export function ShippingInfoModal({
     <>
       <div 
         onClick={() => setOpen(true)} 
-        className="cursor-pointer hover:bg-gray-800/30 transition-colors rounded-lg px-2 py-1"
+        className="cursor-pointer"
         aria-label="View shipping information"
       >
         {children}

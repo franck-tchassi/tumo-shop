@@ -10,6 +10,7 @@ export const client = createClient({
   dataset,
   projectId,
   useCdn: true,
+  
 })
 
 export const getAllProducts = async () =>{
@@ -34,7 +35,35 @@ export const getProductsCategorySlug = async (slug: string) =>{
   const query = `*[_type == "product" && references(*[_type == "productCategory" && slug.current == $slug][0]._id)]`
   const products = await sanityFetch({query: query, params: {slug}});
   return products.data as Product[];
+
 }
+
+
+export const getProductById = async (id: string) => {
+  const query = `*[_type == "product" && _id == $id][0]{
+    ...,
+    "mainImage": mainImage.asset->url,
+    "gallery": gallery[]{
+      ...,
+      "url": asset->url,
+      "dimensions": asset->metadata.dimensions,
+      alt,
+      caption
+    },
+    "categories": categories[]->{
+      _id,
+      title,
+      "slug": slug.current,
+      "parent": parent->{
+        _id,
+        title,
+        "slug": slug.current
+      }
+    }
+  }`;
+  const product = await sanityFetch({ query: query, params: { id }});
+  return product.data as Product;
+};
 
 export const searchProducts = async (searchQuery: string) => {
   const query = `*[_type == "product" && (

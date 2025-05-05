@@ -1,0 +1,456 @@
+[
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Un code promo est obligatoire"
+          },
+          {
+            "rules": [
+              {
+                "flag": "regex",
+                "constraint": {
+                  "pattern": "/^[A-Z0-9]+$/i",
+                  "invert": false
+                }
+              }
+            ],
+            "level": "error",
+            "message": "Utilisez seulement des lettres et chiffres"
+          }
+        ],
+        "name": "code",
+        "type": "string"
+      },
+      {
+        "options": {
+          "list": [
+            {
+              "title": "Percentage",
+              "value": "percentage"
+            },
+            {
+              "title": "Fixed Amount",
+              "value": "fixed"
+            }
+          ],
+          "layout": "radio"
+        },
+        "initialValue": "percentage",
+        "name": "discountType",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "description": "Pourcentage ou montant fixe selon le type choisi",
+        "name": "discountValue",
+        "type": "number"
+      },
+      {
+        "description": "Lier à des catégories spécifiques (laisser vide pour toutes)",
+        "of": [
+          {
+            "to": [
+              {
+                "type": "productCategory"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to product category"
+          }
+        ],
+        "name": "applicableTo",
+        "type": "array"
+      },
+      {
+        "name": "expirationDate",
+        "type": "datetime"
+      },
+      {
+        "initialValue": true,
+        "name": "isActive",
+        "type": "boolean",
+        "title": "Active"
+      }
+    ],
+    "name": "promotionCode",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "of": [
+          {
+            "to": [
+              {
+                "type": "promotionCode"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to promotion code"
+          }
+        ],
+        "name": "codes",
+        "type": "array",
+        "title": "Promotion Codes"
+      },
+      {
+        "name": "startDate",
+        "type": "datetime"
+      },
+      {
+        "description": "Produits spécifiques (prioritaire sur les catégories)",
+        "of": [
+          {
+            "to": [
+              {
+                "type": "product"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to product"
+          }
+        ],
+        "name": "products",
+        "type": "array",
+        "title": "Target Products"
+      }
+    ],
+    "name": "promotionCampaign",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Un titre est obligatoire"
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "options": {
+          "source": "title",
+          "maxLength": 50
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error"
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "image",
+        "type": "image"
+      },
+      {
+        "description": "Lier à une catégorie parente pour créer une hiérarchie.",
+        "to": [
+          {
+            "type": "productCategory"
+          }
+        ],
+        "name": "parent",
+        "type": "reference",
+        "title": "Parent Category"
+      }
+    ],
+    "name": "productCategory",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Le titre est obligatoire"
+          }
+        ],
+        "description": "Nom du produit",
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "description": "Description détaillée du produit",
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Le prix est obligatoire"
+          },
+          {
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              }
+            ],
+            "level": "error",
+            "message": "Le prix doit être positif"
+          }
+        ],
+        "description": "Prix en EUR",
+        "name": "price",
+        "type": "number"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Une image principale est obligatoire"
+          }
+        ],
+        "description": "Image principale du produit",
+        "name": "mainImage",
+        "type": "image"
+      },
+      {
+        "options": {
+          "layout": "grid",
+          "sortable": true
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "max",
+                "constraint": 10
+              }
+            ],
+            "level": "warning",
+            "message": "Maximum 10 images autorisées"
+          }
+        ],
+        "description": "Images supplémentaires du produit (10 maximum)",
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "type": "galleryImage"
+          }
+        ],
+        "name": "gallery",
+        "type": "array",
+        "title": "Image Gallery"
+      },
+      {
+        "options": {
+          "source": "title",
+          "maxLength": 100
+        },
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Le slug est obligatoire"
+          }
+        ],
+        "description": "URL optimisée pour le SEO",
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ],
+            "level": "error",
+            "message": "Au moins une catégorie est requise"
+          }
+        ],
+        "description": "Catégories associées au produit",
+        "of": [
+          {
+            "to": [
+              {
+                "type": "productCategory"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to product category"
+          }
+        ],
+        "name": "categories",
+        "type": "array"
+      },
+      {
+        "fields": [
+          {
+            "initialValue": 0,
+            "validation": [
+              {
+                "rules": [
+                  {
+                    "flag": "min",
+                    "constraint": 0
+                  },
+                  {
+                    "flag": "max",
+                    "constraint": 5
+                  },
+                  {
+                    "flag": "precision",
+                    "constraint": 1
+                  }
+                ],
+                "level": "error"
+              }
+            ],
+            "readOnly": true,
+            "name": "averageRating",
+            "type": "number"
+          },
+          {
+            "initialValue": 0,
+            "readOnly": true,
+            "name": "reviewCount",
+            "type": "number"
+          }
+        ],
+        "name": "reviewStats",
+        "type": "object",
+        "title": "Review Statistics"
+      }
+    ],
+    "name": "product",
+    "type": "document"
+  },
+  {
+    "options": {
+      "hotspot": true
+    },
+    "fields": [
+      {
+        "validation": [
+          {
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "level": "error",
+            "message": "Un texte alternatif est obligatoire"
+          }
+        ],
+        "description": "Texte alternatif pour l'accessibilité et le SEO",
+        "name": "alt",
+        "type": "string",
+        "title": "Alternative Text"
+      },
+      {
+        "description": "Légende optionnelle sous l'image",
+        "name": "caption",
+        "type": "string"
+      }
+    ],
+    "name": "galleryImage",
+    "type": "image"
+  }
+]
