@@ -1,4 +1,5 @@
 
+import { getReviewsForProduct, getReviewStats } from '@/actions/review';
 import ProductGallery from '@/components/DetailProduct/ProductGallery';
 import { getProductById } from '@/sanity/lib/client';
 import { ChevronRight, Home } from 'lucide-react'
@@ -12,6 +13,8 @@ const ProductPage = async ({ params }: productPageProps) => {
 
     const { id } = await params
     const product = await getProductById(id);
+    const { averageRating, reviewCount } = await getReviewStats(id)
+    const reviews = await getReviewsForProduct(id)
 
     const getFullCategoryPath = (category: any) => {
         const path = [];
@@ -33,12 +36,12 @@ const ProductPage = async ({ params }: productPageProps) => {
         return path;
     };
 
-    const categoryPath = product.categories?.[0] 
-        ? getFullCategoryPath(product.categories[0])
+    const categoryPath = product?.categories?.[0] 
+        ? getFullCategoryPath(product?.categories[0])
         : [];
 
     return (
-        <div className='bg-gray-50 px-6 md:px-20'>
+        <div className='bg-gray-50 px-6 md:px-32'>
 
                 {/* Breadcrumb Navigation */}
             
@@ -66,14 +69,24 @@ const ProductPage = async ({ params }: productPageProps) => {
                         
                         <ChevronRight className='w-4 h-4 text-gray-400' />
                         <span className='text-gray-600 truncate'>
-                            {product.title}
+                            {product?.title}
                         </span>
                     </div>
                 
                 </div>
 
             
-                 <ProductGallery product={product} />
+                <ProductGallery 
+                    product={{ 
+                        ...product, 
+                        averageRating, 
+                        reviewCount,
+                        reviews // seulement si vous voulez les inclure dans product
+                    }}
+                    reviews={reviews}
+                    averageRating={averageRating}
+                    reviewCount={reviewCount}
+                />
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import { getCurrentSession } from "@/actions/auth";
-import { getAllProducts } from "../../../sanity/lib/client";
+import { getAllCategories, getAllProducts } from "../../../sanity/lib/client";
 import SalesCampaignBanner from "@/components/layout/SalesCampaignBanner";
 import ProductGrid from "@/components/product/ProductGrid";
 import WhyChooseUs from "@/components/layout/WhyChooseUs";
@@ -7,6 +7,7 @@ import WhyChooseUs from "@/components/layout/WhyChooseUs";
 const Home = async () => {
   const {user} = await getCurrentSession()
   const products = await getAllProducts()
+  const categories = await getAllCategories()
  
   return (
     <div>
@@ -14,11 +15,12 @@ const Home = async () => {
       <WhyChooseUs />
 
       <section className="container mx-auto py-8">
-         <ProductGrid products={products}/>
-      
+         <ProductGrid products={products} categories={categories}/>
       </section>
     </div>
   );
 }
 
 export default Home
+
+

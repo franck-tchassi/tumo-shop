@@ -83,6 +83,20 @@ export type GalleryImage = {
   caption?: string;
 };
 
+export type ProductWithDereferencedCategories = Omit<Product, 'categories'> & {
+  categories?: Array<{
+    _id: string;
+    _type: "productCategory";
+    title?: string;
+    slug?: Slug;
+    parent?: {
+      _id: string;
+      title?: string;
+      slug?: Slug;
+    };
+  }>;
+};
+
 export type Product = {
   _id: string;
   _type: "product";
@@ -120,6 +134,25 @@ export type Product = {
     reviewCount?: number;
   };
 };
+
+// Créez un type complet pour les catégories développées
+export type DereferencedCategory = {
+  _id: string;
+  _type: "productCategory";
+  title?: string;
+  slug?: Slug;
+  parent?: {
+    _id: string;
+    title?: string;
+    slug?: Slug;
+  };
+};
+// Créez un type étendu pour les produits avec catégories développées
+export type ProductWithDetails = Omit<Product, 'categories'> & {
+  categories?: DereferencedCategory[];
+};
+
+
 
 export type ProductCategory = {
   _id: string;

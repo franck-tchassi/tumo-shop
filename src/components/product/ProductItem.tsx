@@ -1,13 +1,13 @@
 "use client"
 
-import { Product } from '@/sanity.types'
+import { Product, ProductWithDetails } from '@/sanity.types'
 import { urlForImage } from '@/sanity/lib/image'
 import Image from 'next/image'
 import Link from 'next/link'
 import { BiCartAdd } from "react-icons/bi";
 
 type ProductItemProps = {
-  product: Product
+  product: Product | ProductWithDetails;
 }
 
 const ProductItem = ({ product }: ProductItemProps) => {

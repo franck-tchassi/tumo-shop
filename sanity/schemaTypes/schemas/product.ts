@@ -1,5 +1,6 @@
 import { defineType, defineField } from "sanity";
-import { galleryImage } from "./galleryImage";
+import { galleryImage } from "./galleryImage"
+
 
 export const product = defineType({
   name: "product",
@@ -195,26 +196,7 @@ export const product = defineType({
       validation: Rule => Rule.required().min(1)
     }),
 
-    defineField({
-      name: "reviewStats",
-      title: "Review Statistics",
-      type: "object",
-      fields: [
-        defineField({
-          name: "averageRating",
-          title: "Average Rating",
-          type: "number",
-          initialValue: 0,
-          validation: Rule => Rule.min(0).max(5).precision(1)
-        }),
-        defineField({
-          name: "reviewCount",
-          title: "Review Count",
-          type: "number",
-          initialValue: 0
-        })
-      ]
-    })
+    
   ],
 
   preview: {
@@ -224,19 +206,20 @@ export const product = defineType({
       stock: 'inventory.stock',
       clothingSizes: 'clothingSizes',
       shoeSizes: 'shoeSizes',
-      //colorProduct: 'colorProduct'
+      averageRating: 'reviewStats.averageRating',
+      reviewCount: 'reviewStats.reviewCount'
     },
     prepare(selection) {
-      const { title, media, stock, clothingSizes, shoeSizes} = selection;
+      const { title, media, stock, clothingSizes, shoeSizes, averageRating, reviewCount } = selection;
       return {
         title,
         subtitle: [
           stock !== undefined ? `Stock: ${stock}` : '',
           clothingSizes?.length ? `${clothingSizes.length} tailles vêtements` : '',
-          shoeSizes?.length ? `${shoeSizes.length} tailles chaussures` : ''
+          shoeSizes?.length ? `${shoeSizes.length} tailles chaussures` : '',
+          averageRating ? `⭐ ${averageRating} (${reviewCount || 0} avis)` : ''
         ].filter(Boolean).join(' | '),
-        media,
-        //colorProduct
+        media
       };
     }
   }
