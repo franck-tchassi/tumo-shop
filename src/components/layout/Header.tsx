@@ -1,13 +1,17 @@
 "use client";
 
-import { logoutUser } from '@/actions/auth';
+
 import { User } from '@/lib/generated/prisma';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import HeaderSearchBar from './HeaderSearchBar';
 import { FaRegUser } from "react-icons/fa6";
 import AnnouncementBar from './AnnouncementBar';
+import { useI18n } from '@/locales/client';
+import LocaleSelectLanguage from '@/app/[locale]/LocaleSelectLanguage';
+import Help from './Help';
+import AccountInfo from '../account/AccountInfo';
 
 
 
@@ -82,6 +86,8 @@ type HeaderProps = {
 const Header = ({user, categorySelector}: HeaderProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [prevScrollY, setPrevScrollY] = useState(0);
+  const t = useI18n();
+  const pathname = usePathname();
 
   const router = useRouter();
 
@@ -104,7 +110,12 @@ const Header = ({user, categorySelector}: HeaderProps) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [prevScrollY]);
 
-  
+  // Fonction pour changer la langue
+  const changeLanguage = (locale: string) => {
+    // Exemple: /fr/products → /en/products
+    const newPath = pathname.replace(/^\/[a-z]{2}/, `/${locale}`);
+    router.push(newPath);
+  };
 
   return (
     <header className="w-full sticky top-0 z-50">
@@ -118,7 +129,7 @@ const Header = ({user, categorySelector}: HeaderProps) => {
 
         <div className="w-full bg-white/80 backdrop-blur-sm border-b border-gray-100">
           <div className="container mx-auto px-6 md:px-20 ">
-            <div className="flex items-center justify-between h-16 sm:h-20 ">
+            <div className="flex items-center justify-between h-14 sm:h-16 ">
               {/* Navigation gauche - Menu mobile */}
               <div className="flex items-center md:hidden">
                 <IconButton>
@@ -149,7 +160,6 @@ const Header = ({user, categorySelector}: HeaderProps) => {
               {/* Navigation desktop */}
               <nav className="hidden md:flex  gap-6 lg:gap-8 mr-12">
                 {categorySelector}
-                <NavLink href="#">Sale</NavLink>
               </nav>
 
               {/* Navigation droite */}
@@ -158,25 +168,9 @@ const Header = ({user, categorySelector}: HeaderProps) => {
                   <SearchButton />
 
                   {user ? (
-                    <div className='flex items-center gap-3'>
-                    <Link 
-                      href="#"
-                      className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
-                      onClick={async (e) => {
-                        e.preventDefault()
-                        await logoutUser()
-                        router.refresh()
-                      }}
-                    >
-                      <FaRegUser className="w-5 h-5 text-gray-800" />
-                      <div className="hidden sm:flex flex-col text-left">
-                        <span className="text-xs text-gray-500 truncate">
-                          Hi, {user.email.substring(0, 6)}...
-                        </span>
-                        <span className="text-xs font-medium">Account</span>
-                      </div>
-                    </Link>
-                  </div>
+                    
+                    <AccountInfo user={user} />
+                  
                   ) : (
                     <Link 
                       href="/auth/sign-in" 
@@ -192,6 +186,9 @@ const Header = ({user, categorySelector}: HeaderProps) => {
                   )}
 
                 </div>
+                
+                <Help />
+                <LocaleSelectLanguage />
                 <CartButton itemCount={0} />
               </div>
             </div>

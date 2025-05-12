@@ -1,4 +1,4 @@
-// app/(landing)/product/[id]/ProductGallery.tsx
+
 'use client';
 
 import { urlForImage } from '@/sanity/lib/image';
@@ -7,6 +7,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useGalleryStore } from '@/stores/useGalleryStore';
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import CommentForm from '../review/CommentForm';
+import AddToCartButton from '../product/AddToCartButton';
+import ReviewProduct from './ReviewProduct';
+import { Separator } from '../ui/separator';
 
 interface Review {
     id: number;
@@ -26,9 +29,10 @@ interface ProductGalleryProps {
     reviews?: Review[];
     averageRating?: number;
     reviewCount?: number;
+    locale: string;
 }
 
-export default function ProductGallery({ product, reviews = [], averageRating = 0, reviewCount = 0 }: ProductGalleryProps) {
+export default function ProductGallery({ product, reviews = [], averageRating = 0, reviewCount = 0, locale }: ProductGalleryProps) {
   const { mainImage, setMainImage, hoveredImage, setHoveredImage, resetGallery } = useGalleryStore();
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -103,95 +107,110 @@ export default function ProductGallery({ product, reviews = [], averageRating = 
   return (
     <div className='container mx-auto'>
       <div className='flex flex-col md:flex-row gap-2'>
-        {/* Miniatures à gauche */}
-        <div className='flex md:flex-col gap-2 order-2 md:order-1 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0'>
-          {product.gallery?.map((item: any, index: number) => (
+  
+        <div className='flex flex-col gap-8'>
+          <div className='flex flex-col md:flex-row gap-2'>
+            {/* Miniatures à gauche */}
+            <div className='flex md:flex-col gap-2 order-2 md:order-1 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0'>
+              {product.gallery?.map((item: any, index: number) => (
+                <div 
+                  key={index} 
+                  className={`relative w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 flex-shrink-0 cursor-pointer transition-all
+                    ${mainImage === item ? 'border-blue-500' : 'border-gray-200 hover:border-gray-400'}`}
+                  onMouseEnter={() => setHoveredImage(item)}
+                  onClick={() => {
+                    setCurrentIndex(index);
+                    setMainImage(item);
+                    setZoomPos({ x: 50, y: 50 });
+                  }}
+                >
+                  <Image
+                    src={urlForImage(item)}
+                    alt={item.alt || product.title || `Gallery image ${index + 1}`}
+                    fill
+                    className='object-cover'
+                  />
+                </div>
+              ))}
+            </div>
+            
+            {/* Image principale avec chevrons horizontaux */}
             <div 
-              key={index} 
-              className={`relative w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 flex-shrink-0 cursor-pointer transition-all
-                ${mainImage === item ? 'border-blue-500' : 'border-gray-200 hover:border-gray-400'}`}
-              onMouseEnter={() => setHoveredImage(item)}
-              onClick={() => {
-                setCurrentIndex(index);
-                setMainImage(item);
+              ref={containerRef}
+              className='order-1 md:order-2 w-full md:w-[600px] relative overflow-hidden bg-white rounded-lg border border-gray-200'
+              style={{ 
+                aspectRatio: '1/1',
+                cursor: isHovering ? 'zoom-in' : 'default'
+              }}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => {
+                setIsHovering(false);
                 setZoomPos({ x: 50, y: 50 });
               }}
+              onMouseMove={handleMouseMove}
             >
-              <Image
-                src={urlForImage(item)}
-                alt={item.alt || product.title || `Gallery image ${index + 1}`}
-                fill
-                className='object-cover'
-              />
-            </div>
-          ))}
-        </div>
-        
-        {/* Image principale avec chevrons horizontaux */}
-        <div 
-          ref={containerRef}
-          className='order-1 md:order-2 w-full md:w-[600px] relative overflow-hidden bg-white rounded-lg border border-gray-200'
-          style={{ 
-            aspectRatio: '1/1',
-            cursor: isHovering ? 'zoom-in' : 'default'
-          }}
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => {
-            setIsHovering(false);
-            setZoomPos({ x: 50, y: 50 });
-          }}
-          onMouseMove={handleMouseMove}
-        >
-          {mainImage && (
-            <div className='relative w-full h-full'>
-              {/* Image normale */}
-              <Image
-                src={urlForImage(mainImage)}
-                alt={mainImage.alt || product.title || 'Main product image'}
-                fill
-                className={`object-contain p-4 transition-opacity duration-200 ${isHovering ? 'opacity-0' : 'opacity-100'}`}
-                priority
-              />
+              {mainImage && (
+                <div className='relative w-full h-full'>
+                  {/* Image normale */}
+                  <Image
+                    src={urlForImage(mainImage)}
+                    alt={mainImage.alt || product.title || 'Main product image'}
+                    fill
+                    className={`object-contain p-4 transition-opacity duration-200 ${isHovering ? 'opacity-0' : 'opacity-100'}`}
+                    priority
+                  />
+                  
+                  {/* Image zoomée (125%) */}
+                  <div 
+                    className={`absolute inset-0 transition-opacity duration-200 ${isHovering ? 'opacity-100' : 'opacity-0'}`}
+                    style={{ 
+                      backgroundImage: `url(${urlForImage(mainImage)})`,
+                      backgroundSize: '125%',
+                      backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
+                      backgroundRepeat: 'no-repeat',
+                      cursor: 'zoom-out'
+                    }}
+                  />
+                </div>
+              )}
               
-              {/* Image zoomée (125%) */}
-              <div 
-                className={`absolute inset-0 transition-opacity duration-200 ${isHovering ? 'opacity-100' : 'opacity-0'}`}
-                style={{ 
-                  backgroundImage: `url(${urlForImage(mainImage)})`,
-                  backgroundSize: '125%',
-                  backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
-                  backgroundRepeat: 'no-repeat',
-                  cursor: 'zoom-out'
-                }}
-              />
+              {/* Chevrons de navigation horizontaux */}
+              {product.gallery?.length > 1 && (
+                <>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigateImage('left');
+                    }}
+                    className='absolute left-2 cursor-pointer top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md z-10 transition-all hover:scale-110'
+                    aria-label='Image précédente'
+                  >
+                    <ChevronLeft className='w-8 h-8 text-gray-700' />
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigateImage('right');
+                    }}
+                    className='absolute right-2 cursor-pointer top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md z-10 transition-all hover:scale-110'
+                    aria-label='Image suivante'
+                  >
+                    <ChevronRight className='w-8 h-8 text-gray-700' />
+                  </button>
+                </>
+              )}
             </div>
-          )}
-          
-          {/* Chevrons de navigation horizontaux */}
-          {product.gallery?.length > 1 && (
-            <>
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigateImage('left');
-                }}
-                className='absolute left-2 cursor-pointer top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md z-10 transition-all hover:scale-110'
-                aria-label='Image précédente'
-              >
-                <ChevronLeft className='w-8 h-8 text-gray-700' />
-              </button>
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigateImage('right');
-                }}
-                className='absolute right-2 cursor-pointer top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md z-10 transition-all hover:scale-110'
-                aria-label='Image suivante'
-              >
-                <ChevronRight className='w-8 h-8 text-gray-700' />
-              </button>
-            </>
-          )}
+          </div>
+          <Separator />
+          {/*  Section avis */}
+
+          <ReviewProduct 
+            averageRating={averageRating} 
+            reviewCount={reviewCount} 
+            reviews={reviews}
+            productId={product._id}  // Ajoutez cette ligne
+            locale={locale}
+          />
         </div>
         
         {/* Détails produit */}
@@ -287,75 +306,14 @@ export default function ProductGallery({ product, reviews = [], averageRating = 
                 </div>
             </div>
 
-            <button className='w-full py-3 font-semibold cursor-pointer  border-black border transition-colors'>
-              Add to cart
-            </button>
-
-            {/*  Section avis */}
-            <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-3">Avis clients</h3>
-                <div className="flex items-center mb-2">
-                {/* Note numérique */}
-                <span className="text-lg font-bold text-gray-900 mr-2">
-                    {averageRating.toFixed(1)}
-                </span>
-                
-                {/* Étoiles avec précision décimale */}
-                <div className="flex relative mr-2">
-                    {[1, 2, 3, 4, 5].map((star) => {
-                    const filled = Math.max(0, Math.min(1, averageRating - star + 1));
-                    
-                    return (
-                        <span key={star} className="relative" style={{ width: '1em', height: '1em' }}>
-                        {/* Fond gris */}
-                        <span className="text-gray-300 absolute">★</span>
-                        
-                        {/* Partie jaune (pleine ou partielle) */}
-                        {filled > 0 && (
-                            <span 
-                            className="text-yellow-500 absolute top-0 left-0 overflow-hidden"
-                            style={{ width: `${filled * 100}%` }}
-                            >
-                            ★
-                            </span>
-                        )}
-                        </span>
-                    );
-                    })}
-                </div>
-                
-                {/* Nombre d'avis */}
-                <span className="text-sm text-gray-500">
-                    ({reviewCount} reviews)
-                </span>
-                </div>
-
-                {reviews.map((review) => (
-                <div key={review.id} className="border-b py-4">
-                    <div className="flex items-center mb-1">
-                    <span className="font-medium">{review.user.email}</span>
-                    <div className="flex ml-2">
-                        {[...Array(5)].map((_, i) => (
-                        <span key={i} className={i < review.rating ? 'text-yellow-500' : 'text-gray-300'}>
-                            ★
-                        </span>
-                        ))}
-                    </div>
-                    </div>
-                    {review.comment && <p className="text-gray-600 text-sm">{review.comment}</p>}
-                    <p className="text-xs text-gray-400 mt-2">
-                    {new Date(review.createdAt).toLocaleDateString()}
-                    </p>
-                </div>
-                ))}
-
-                
-                <CommentForm productId={product._id} />
-            </div>
-
+            {/* Add to cart */}
+            <AddToCartButton product={product} />
           </div>
+          
         </div>
+        
       </div>
+      
     </div>
   );
 }

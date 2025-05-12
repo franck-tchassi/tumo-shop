@@ -7,11 +7,11 @@ import Link from 'next/link';
 import React from 'react';
 
 type productPageProps = {
-    params: Promise<{ id: string}>
+    params: Promise<{ id: string, locale: string}>
 }
 const ProductPage = async ({ params }: productPageProps) => {
 
-    const { id } = await params
+    const { id, locale } = await params
     const product = await getProductById(id);
     const { averageRating, reviewCount } = await getReviewStats(id)
     const reviews = await getReviewsForProduct(id)
@@ -48,7 +48,7 @@ const ProductPage = async ({ params }: productPageProps) => {
                 <div className='container mx-auto py-3 '>
                     <div className='flex items-center gap-2 text-sm flex-wrap'>
                         <Link
-                            href={"/"}
+                            href={`/${locale}`}
                             className='hover:text-gray-600 text-gray-400 transition-colors flex items-center gap-1'
                         >
                             <Home className='w-4 h-4' />
@@ -59,7 +59,7 @@ const ProductPage = async ({ params }: productPageProps) => {
                             <React.Fragment key={category._id}>
                                 <ChevronRight className='w-4 h-4 text-gray-400' />
                                 <Link
-                                    href={`/categories/${category.slug}`}
+                                    href={`/${locale}/categories/${category.slug}`}
                                     className='hover:text-gray-600 text-gray-400 transition-colors'
                                 >
                                     {category.title}
@@ -86,6 +86,7 @@ const ProductPage = async ({ params }: productPageProps) => {
                     reviews={reviews}
                     averageRating={averageRating}
                     reviewCount={reviewCount}
+                    locale={locale}
                 />
         </div>
     );

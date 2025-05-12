@@ -15,6 +15,8 @@ model User {
   passwordHash String
   sessions     Session[]
   reviews      Review[]
+
+  cart Cart?
 }
 
 model Session {
@@ -36,4 +38,26 @@ model Review {
   user User @relation(fields: [userId], references: [id])
 
   @@index([productId])
+}
+
+model CartLineItem {
+  id              String @id
+  sanityProductId String
+  quantity        Int
+
+  title String
+  price Float
+  image String
+
+  cartId String
+  cart   Cart   @relation(references: [id], fields: [cartId], onDelete: Cascade)
+}
+
+model Cart {
+  id String @id
+
+  userId Int?  @unique
+  user   User? @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  items CartLineItem[]
 }
